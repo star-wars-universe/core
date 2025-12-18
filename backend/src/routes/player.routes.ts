@@ -204,7 +204,7 @@ router.get('/dashboard', authMiddleware, async (req: AuthRequest, res: Response)
         id: research.id,
         researchTypeName: research.researchType.name,
         category: research.researchType.category,
-        progress: research.progress,
+        progress: research.currentProgress,
         maxProgress: research.maxProgress,
       })),
       totals: {
