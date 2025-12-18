@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { Link } from 'react-router-dom';
-import { Globe, Rocket, Wrench, TrendingUp, Zap, Box, Coins, Clock, Gem, Wind, Battery, Sparkles, Heart, Shield, FlaskConical } from 'lucide-react';
+import { Globe, Rocket, Wrench, TrendingUp, Zap, Box, Coins, Clock, Gem, Wind, Battery, Sparkles, Heart, Shield, FlaskConical, X } from 'lucide-react';
+import api from '../lib/api';
+import api from '../lib/api';
 
 interface DashboardData {
   planets: Array<{
@@ -190,6 +192,26 @@ export default function Dashboard() {
     const interval = setInterval(fetchDashboard, 30000); // Refresh every 30s
     return () => clearInterval(interval);
   }, []);
+
+  const cancelResearch = async () => {
+    if (!confirm('Forschung wirklich abbrechen? Der Fortschritt geht verloren.')) {
+      return;
+    }
+    
+    try {
+      await api.post('/research/cancel');
+      // Reload dashboard after cancel
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/api/player/dashboard', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        setDashboardData(await response.json());
+      }
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Forschung konnte nicht abgebrochen werden');
+    }
+  };
 
   if (loading) {
     return (
@@ -489,15 +511,24 @@ export default function Dashboard() {
               {dashboardData.activeResearch.map((research) => (
                 <div key={research.id} className="bg-gray-700/50 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-1">
                       <h4 className="text-white font-semibold text-sm">{research.researchTypeName}</h4>
                       <span className="text-xs px-2 py-0.5 rounded bg-cyan-900/50 text-cyan-300">
                         {research.category}
                       </span>
                     </div>
-                    <span className="text-cyan-400 text-xs font-mono">
-                      {research.progress} / {research.maxProgress} {research.resourceType}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-cyan-400 text-xs font-mono">
+                        {research.progress} / {research.maxProgress} {research.resourceType}
+                      </span>
+                      <button
+                        onClick={cancelResearch}
+                        className="p-1 bg-red-600 hover:bg-red-700 rounded transition-colors"
+                        title="Forschung abbrechen"
+                      >
+                        <X size={14} className="text-white" />
+                      </button>
+                    </div>
                   </div>
                   <div className="bg-gray-900 rounded-full h-1.5 overflow-hidden">
                     <div 

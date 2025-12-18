@@ -77,11 +77,41 @@ router.get('/available', authMiddleware, async (req: AuthRequest, res: Response)
 
       // Check if in progress
       if (playerProgress?.startedAt && !playerProgress.completedAt) {
+        // Determine resource type for in_progress research
+        let productionRequirement = undefined;
+        if (research.researchLevel === 0) {
+          let resourceType = '';
+          let required = 0;
+          
+          if (research.requiredEnergyTotal) {
+            resourceType = 'Energie';
+            required = research.requiredEnergyTotal;
+          } else if (research.requiredDurastahlTotal) {
+            resourceType = 'Durastahl';
+            required = research.requiredDurastahlTotal;
+          } else if (research.requiredKristallinesSiliziumTotal) {
+            resourceType = 'Kristall';
+            required = research.requiredKristallinesSiliziumTotal;
+          } else if (research.requiredCreditsTotal) {
+            resourceType = 'Credits';
+            required = research.requiredCreditsTotal;
+          }
+          
+          productionRequirement = {
+            type: resourceType,
+            required: 0, // Not relevant for in_progress
+            current: 0, // Not relevant for in_progress
+            estimatedTicks: 0, // Not relevant for in_progress
+            totalRequired: required,
+          };
+        }
+        
         return {
           ...research,
           status: 'in_progress',
           progress: playerProgress.currentProgress,
           maxProgress: playerProgress.maxProgress, // Use stored maxProgress from DB
+          productionRequirement: productionRequirement,
         };
       }
 
@@ -339,6 +369,44 @@ router.get('/active', authMiddleware, async (req: AuthRequest, res: Response) =>
     res.json({ research: activeResearch });
   } catch (error: any) {
     console.error('Active research error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cancel active research
+router.post('/cancel', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const { user } = req as any;
+
+    // Find active research
+    const activeResearch = await prisma.playerResearch.findFirst({
+      where: {
+        playerId: user.player.id,
+        startedAt: { not: null },
+        completedAt: null,
+      },
+      include: {
+        researchType: true,
+      },
+    });
+
+    if (!activeResearch) {
+      return res.status(404).json({ error: 'Keine aktive Forschung gefunden' });
+    }
+
+    // Delete the research progress
+    await prisma.playerResearch.delete({
+      where: {
+        playerId_researchTypeId: {
+          playerId: user.player.id,
+          researchTypeId: activeResearch.researchTypeId,
+        },
+      },
+    });
+
+    res.json({ message: 'Forschung abgebrochen' });
+  } catch (error: any) {
+    console.error('Cancel research error:', error);
     res.status(500).json({ error: error.message });
   }
 });

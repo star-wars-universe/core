@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FlaskConical, TrendingUp, CheckCircle, Clock, Lock, Shield, DollarSign, Atom, Zap } from 'lucide-react';
+import { FlaskConical, TrendingUp, CheckCircle, Clock, Lock, Shield, DollarSign, Atom, Zap, X } from 'lucide-react';
 import api from '../lib/api';
 
 interface ResearchType {
@@ -63,6 +63,19 @@ export default function Research() {
       await loadResearch();
     } catch (error: any) {
       alert(error.response?.data?.error || 'Forschung konnte nicht gestartet werden');
+    }
+  };
+
+  const cancelResearch = async () => {
+    if (!confirm('Forschung wirklich abbrechen? Der Fortschritt geht verloren.')) {
+      return;
+    }
+    
+    try {
+      await api.post('/research/cancel');
+      await loadResearch();
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Forschung konnte nicht abgebrochen werden');
     }
   };
 
@@ -300,13 +313,22 @@ export default function Research() {
                             ✓ Abgeschlossen
                           </button>
                         ) : research.status === 'in_progress' ? (
-                          <button
-                            disabled
-                            className="w-full py-2 px-4 bg-blue-900/50 text-blue-400 rounded font-medium cursor-not-allowed"
-                          >
-                            <Clock className="inline w-4 h-4 mr-2" />
-                            In Arbeit...
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              disabled
+                              className="flex-1 py-2 px-4 bg-blue-900/50 text-blue-400 rounded font-medium cursor-not-allowed"
+                            >
+                              <Clock className="inline w-4 h-4 mr-2" />
+                              In Arbeit...
+                            </button>
+                            <button
+                              onClick={cancelResearch}
+                              className="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded font-medium transition-colors"
+                              title="Forschung abbrechen"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
                         ) : (
                           <button
                             onClick={() => startResearch(research.id)}
