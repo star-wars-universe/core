@@ -22,7 +22,7 @@
   # https://devenv.sh/processes/
   processes = {
     backend.exec = "cd backend && npm run dev";
-    frontend.exec = "cd frontend && NODE_OPTIONS='--max-old-space-size=4096' npm run dev";
+    frontend.exec = "cd frontend && NODE_OPTIONS='--max-old-space-size=8192' npm run dev";
   };
 
   # https://devenv.sh/services/
