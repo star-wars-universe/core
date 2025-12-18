@@ -284,12 +284,27 @@ router.post('/start', authMiddleware, async (req: AuthRequest, res: Response) =>
       }
     }
 
+    // Calculate maxProgress for this research
+    let maxProgress = 0;
+    if (researchType.researchLevel === 0) {
+      // Level 0: Use total resource requirement
+      maxProgress = researchType.requiredDurastahlTotal || 
+                    researchType.requiredKristallinesSiliziumTotal || 
+                    researchType.requiredEnergyTotal || 
+                    researchType.requiredCreditsTotal || 
+                    0;
+    } else {
+      // Level 1+: Use research point cost
+      maxProgress = researchType.researchPointCost;
+    }
+
     // Start research (for all levels)
     const research = await prisma.playerResearch.create({
       data: {
         playerId: user.player.id,
         researchTypeId: researchTypeId,
         currentProgress: 0,
+        maxProgress: maxProgress,
         startedAt: new Date(),
       },
       include: {

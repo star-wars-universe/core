@@ -17,7 +17,7 @@
   ];
   hostname = "MB-FVFH2468Q05P";
   username = "TMUNDIN";
-  git_root = null;
+  git_root = "/Users/TMUNDIN/git/github.com/Saboti/swu";
   secretspec = null;
 };
     in
@@ -54,7 +54,7 @@
   ];
   hostname = "MB-FVFH2468Q05P";
   username = "TMUNDIN";
-  git_root = null;
+  git_root = "/Users/TMUNDIN/git/github.com/Saboti/swu";
   secretspec = null;
 };
       devenv =

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { Link } from 'react-router-dom';
-import { Globe, Rocket, Wrench, TrendingUp, Zap, Box, Coins, Clock, Gem, Wind, Battery, Sparkles, Heart, Shield } from 'lucide-react';
+import { Globe, Rocket, Wrench, TrendingUp, Zap, Box, Coins, Clock, Gem, Wind, Battery, Sparkles, Heart, Shield, FlaskConical } from 'lucide-react';
 
 interface DashboardData {
   planets: Array<{
@@ -36,6 +36,13 @@ interface DashboardData {
     planetName: string;
     startedAt: string;
     completesAt: string;
+  }>;
+  activeResearch: Array<{
+    id: number;
+    researchTypeName: string;
+    category: string;
+    progress: number;
+    maxProgress: number;
   }>;
   totals: {
     credits: number;
@@ -465,6 +472,47 @@ export default function Dashboard() {
             </div>
           ) : (
             <p className="text-gray-500 text-sm">Keine aktiven Bauaufträge</p>
+          )}
+        </div>
+      </div>
+
+      {/* Active Research */}
+      <div className="bg-space-light p-6 rounded-lg border border-gray-700">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <FlaskConical className="text-cyan-400" size={20} />
+          Laufende Forschungen
+        </h3>
+        <div className="space-y-2">
+          {dashboardData.activeResearch && dashboardData.activeResearch.length > 0 ? (
+            <div className="space-y-2">
+              {dashboardData.activeResearch.map((research) => (
+                <div key={research.id} className="bg-gray-700/50 p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-white font-semibold text-sm">{research.researchTypeName}</h4>
+                      <span className="text-xs px-2 py-0.5 rounded bg-cyan-900/50 text-cyan-300">
+                        {research.category}
+                      </span>
+                    </div>
+                    <span className="text-cyan-400 text-xs font-mono">
+                      {research.progress} / {research.maxProgress} FP
+                    </span>
+                  </div>
+                  <div className="bg-gray-900 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                      className="h-1.5 bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-500"
+                      style={{ width: `${(research.progress / research.maxProgress) * 100}%` }}
+                    />
+                  </div>
+                  <div className="mt-1 text-xs text-gray-400 flex items-center justify-between">
+                    <span>{Math.round((research.progress / research.maxProgress) * 100)}% abgeschlossen</span>
+                    <FlaskConical size={12} className="text-cyan-400 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm">Keine aktiven Forschungen</p>
           )}
         </div>
       </div>

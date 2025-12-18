@@ -90,6 +90,23 @@ router.get('/dashboard', authMiddleware, async (req: AuthRequest, res: Response)
       orderBy: { constructionStartedAt: 'asc' },
     });
 
+    // Get active research
+    const activeResearch = await prisma.playerResearch.findMany({
+      where: {
+        playerId: user.player.id,
+        completedAt: null,
+      },
+      include: {
+        researchType: {
+          select: {
+            name: true,
+            category: true,
+          },
+        },
+      },
+      orderBy: { startedAt: 'asc' },
+    });
+
     // Calculate total production across all planets
     let totalCredits = 0;
     let totalDurastahl = 0;
@@ -182,6 +199,13 @@ router.get('/dashboard', authMiddleware, async (req: AuthRequest, res: Response)
         completesAt: new Date(
           building.constructionStartedAt.getTime() + building.buildingType.buildTime * 60 * 1000
         ),
+      })),
+      activeResearch: activeResearch.map((research) => ({
+        id: research.id,
+        researchTypeName: research.researchType.name,
+        category: research.researchType.category,
+        progress: research.progress,
+        maxProgress: research.maxProgress,
       })),
       totals: {
         credits: totalCredits,

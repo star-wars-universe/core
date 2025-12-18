@@ -222,7 +222,8 @@ model PlayerResearch {
   id              Int      @id @default(autoincrement())
   playerId        Int
   researchTypeId  Int
-  currentProgress Int      @default(0)  // Accumulated FP
+  currentProgress Int      @default(0)  // Accumulated FP or resources
+  maxProgress     Int      @default(0)  // Total required (FP or resources)
   startedAt       DateTime?
   completedAt     DateTime?
   
