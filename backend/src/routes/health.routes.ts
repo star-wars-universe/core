@@ -1,5 +1,5 @@
-# Health check endpoint hinzufügen
 import express from 'express';
+import prisma from '../lib/prisma';
 
 const router = express.Router();
 
