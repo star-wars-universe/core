@@ -138,20 +138,6 @@ export default function SystemView() {
     return { type: 'empty', data: null };
   };
 
-  const getPlanetPosition = (planet: Planet) => {
-    // Calculate position on orbit based on angle and radius
-    // Center is at 50%, radius is relative to container size
-    const centerX = 50;
-    const centerY = 50;
-    const radiusPercent = planet.orbitRadius * 6; // Scale factor for visual appeal
-    const angleRad = (planet.orbitAngle * Math.PI) / 180;
-    
-    const x = centerX + radiusPercent * Math.cos(angleRad);
-    const y = centerY + radiusPercent * Math.sin(angleRad);
-    
-    return { x, y };
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-96">
@@ -247,7 +233,7 @@ export default function SystemView() {
                             )}
 
                             {/* Planet */}
-                            {cell.type === 'planet' && (
+                            {cell.type === 'planet' && cell.data && (
                               <div 
                                 className="w-full h-full rounded-full transition-transform hover:scale-150"
                                 style={{ backgroundColor: getPlanetColor(cell.data.planetType) }}

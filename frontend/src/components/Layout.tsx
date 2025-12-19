@@ -4,7 +4,7 @@ import { useGameStore } from '../stores/gameStore';
 
 export default function Layout() {
   const navigate = useNavigate();
-  const { user, player, logout, isConnected } = useGameStore();
+  const { user, player, logout } = useGameStore();
 
   const handleLogout = () => {
     logout();

@@ -64,7 +64,6 @@ export default function BuildMenu({ planetId, fieldId, onClose, onBuildStarted, 
   const [building, setBuilding] = useState(false);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { user } = useGameStore();
 
   const hasCommandCenter = existingBuildings.some(b => b.buildingType.name === 'Kommandozentrale');
 

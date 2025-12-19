@@ -24,15 +24,15 @@ fi
 export $(grep -v '^#' .env.production | xargs)
 
 echo -e "${YELLOW}Schritt 1: Docker Container stoppen (falls vorhanden)${NC}"
-docker-compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml down
 
 echo ""
 echo -e "${YELLOW}Schritt 2: Docker Images bauen${NC}"
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml build --no-cache
 
 echo ""
 echo -e "${YELLOW}Schritt 3: Container starten${NC}"
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 echo ""
 echo -e "${YELLOW}Schritt 4: Warte auf Datenbank (10 Sekunden)${NC}"

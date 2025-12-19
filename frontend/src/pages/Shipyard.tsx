@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Rocket, Clock, AlertCircle, Coins, Wrench, Gem, Wind, Battery, Sparkles, Heart, Shield, X } from 'lucide-react';
+import { ArrowLeft, Rocket, Clock, AlertCircle, Coins, Wrench, Gem, X } from 'lucide-react';
 import { useGameStore } from '../stores/gameStore';
 
 interface ShipType {
@@ -295,7 +295,9 @@ export default function Shipyard() {
                         <p className="text-xs text-gray-400">{shipClassNames[ship.shipClass]}</p>
                       </div>
                       {!affordable && (
-                        <AlertCircle size={16} className="text-red-400" title="Nicht genug Ressourcen" />
+                        <div title="Nicht genug Ressourcen">
+                          <AlertCircle size={16} className="text-red-400" />
+                        </div>
                       )}
                     </div>
                     <p className="text-sm text-gray-300 mb-3">{ship.description}</p>

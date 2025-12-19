@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Globe, Users, ZoomIn, ArrowLeft } from 'lucide-react';
+import { Globe, ArrowLeft } from 'lucide-react';
 import api from '../lib/api';
 
 interface System {
@@ -122,21 +122,6 @@ export default function Galaxy() {
   const handleMouseLeave = useCallback(() => {
     setHoveredField(null);
   }, []);
-
-  const getSectorColor = (sector?: Sector) => {
-    if (!sector || sector.systems.length === 0) return 'bg-gray-900';
-    
-    const ownedSystems = sector.systems.filter(s => s.hasPlayerPlanets);
-    if (ownedSystems.length === 0) return 'bg-blue-900';
-    
-    const factionName = ownedSystems[0].factionName;
-    if (factionName?.includes('Imperium') || factionName?.includes('Empire')) return 'bg-red-700';
-    if (factionName?.includes('Rebellen') || factionName?.includes('Rebel')) return 'bg-orange-700';
-    
-    return 'bg-blue-900';
-  };
-
-  // getFieldColor removed - now using system-based visualization
 
   if (isLoading) {
     return (
@@ -359,7 +344,6 @@ export default function Galaxy() {
                       const field = sectorFields.find(f => f.x === x + 1 && f.y === y + 1);
                       const isHovered = hoveredField?.x === x + 1 && hoveredField?.y === y + 1;
                       const hasSystem = !!field?.system;
-                      const planetCount = field?.system?.planetCount || 0;
                       const hasOwnPlanets = field?.system?.hasOwnPlanets || false;
 
                       return (
